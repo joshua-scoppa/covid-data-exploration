@@ -3,7 +3,6 @@ Covid Data Exploration
 Skills Used: Joins, CTE's, Aggregate Functions
 */
 
-
 SELECT *
 FROM covid_db.dbo.covid_deaths
 ORDER BY location
@@ -15,7 +14,8 @@ ORDER BY location
 	, date;
 
 
--- Population Infection Rate in UK by Date
+/* Population Infection Rate in UK by Date */
+
 SELECT location
 	, date
 	, total_cases
@@ -28,7 +28,8 @@ ORDER BY location
 	, date;
 
 
--- Infected Death Rate in UK by Date
+/* Infected Death Rate in UK by Date */
+
 SELECT location
 	, date
 	, total_cases
@@ -41,7 +42,8 @@ ORDER BY location
 	, date;
 
 
--- Countries With Highest Infection Rate
+/* Countries With Highest Infection Rate */
+
 SELECT location
 	, population
 	, MAX(total_cases) AS infected_count
@@ -53,7 +55,8 @@ GROUP BY location
 ORDER BY infection_rate DESC;
 
 
--- Countries With Highest Death Rate by Cases Using CTE
+/* Countries With Highest Death Rate by Cases Using CTE */
+
 WITH country_death_rates (location, total_deaths, total_cases) AS
 (
 SELECT location
@@ -69,7 +72,8 @@ FROM country_death_rates
 ORDER BY death_rate DESC;
 
 
--- Continents With Highest Death Count 
+/* Continents With Highest Death Count */
+
 SELECT continent
 	, MAX(total_deaths) AS total_deaths
 FROM covid_db.dbo.covid_deaths
@@ -78,7 +82,8 @@ GROUP BY continent
 ORDER BY total_deaths DESC;
 
 
--- Global Death Rate of Infected
+/* Global Death Rate of Infected */
+
 SELECT SUM(new_cases) AS global_cases
 	, SUM(new_deaths) AS global_deaths
 	, ROUND((SUM(new_deaths) / SUM(new_cases) * 100), 2) AS death_rate
@@ -86,7 +91,8 @@ FROM covid_db.dbo.covid_deaths
 WHERE continent IS NOT NULL;
 
 
--- Joining Both Tables
+/* Joining Both Tables */
+
 SELECT *
 FROM covid_db.dbo.covid_deaths cd
 JOIN covid_db.dbo.covid_vaccinations cv
@@ -94,7 +100,8 @@ JOIN covid_db.dbo.covid_vaccinations cv
 		AND cd.date = cv.date
 
 
--- Global Population Vaccination Count Using CTE
+/* Global Population Vaccination Count Using CTE */
+	
 WITH population_vaccinations (continent, location, date, population, new_vaccinations, vaccinations_count) AS
 (
 SELECT cd.continent
@@ -109,6 +116,7 @@ JOIN covid_db.dbo.covid_vaccinations cv
 		AND cd.date = cv.date
 WHERE cd.continent IS NOT NULL
 )
+
 SELECT *
 	, (vaccinations_count / population) * 100 AS vaccinations_percentage
 FROM population_vaccinations
